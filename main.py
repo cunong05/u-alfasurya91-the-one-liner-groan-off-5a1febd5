@@ -6,9 +6,9 @@ and prints it to stdout.
 
 The entry is validated before it is written, and the written
 file is read back and validated again, so what the judge
-reads is exactly the validated text:
+reads is exactly the validated text. The gate is:
   * a single line (no newline characters inside it),
-  * 1 to 140 characters long,
+  * 1 to 140 characters long, with no leading or trailing space,
   * valid UTF-8, and not only whitespace.
 
 Usage:
@@ -32,11 +32,13 @@ def validate(text):
     """Check the entry against the bounty gate; return it unchanged."""
     if not text or not text.strip():
         raise ValueError("entry must not be empty or only whitespace")
+    if text != text.strip():
+        raise ValueError("entry must not start or end with whitespace")
     if "\n" in text or "\r" in text:
         raise ValueError("entry must be a single line")
     if not 1 <= len(text) <= MAX_LEN:
-        raise ValueError("entry must be 1-%d characters, got %d" % (MAX_LEN, len(text)))
-    text.encode("utf-8")
+        raise ValueError(f"entry must be 1-{MAX_LEN} characters, got {len(text)}")
+    text.encode("utf-8")  # raises UnicodeEncodeError if not encodable
     return text
 
 
@@ -60,7 +62,7 @@ def main(argv=None):
 
     entry = write_entry(validate(ENTRY), args.out)
     if not args.quiet:
-        print("entry: %d characters -> %s" % (len(entry), args.out), file=sys.stderr)
+        print(f"entry: {len(entry)} characters -> {args.out}", file=sys.stderr)
     print(entry)
     return 0
 

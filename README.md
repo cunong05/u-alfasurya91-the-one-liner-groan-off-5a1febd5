@@ -15,11 +15,13 @@ delivers at the dinner table, with the punchline landing on the last word.
 ## How it works
 
 `main.py` holds the entry text, validates it against the bounty gate
-(single line, 1–140 characters, valid UTF-8, not only whitespace),
-writes it to `/output/entry.txt`, and prints it:
+(single line, 1–140 characters, no leading/trailing space, valid UTF-8,
+not only whitespace), writes it to `/output/entry.txt`, reads the file
+back and re-validates it, and prints it:
 
 ```sh
-python3 main.py
+python3 main.py            # writes /output/entry.txt (default)
+python3 main.py --out /tmp/entry.txt --quiet
 ```
 
 ## License
